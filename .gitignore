@@ -1,3 +1,14 @@
-./venv
-./BankModel_Challange_Rubric_Summary.pdf
-BankModel_Challenge_Rubric_Summary.pdf
+# Virtual environment
+venv/
+
+# Compiled Python files
+__pycache__/
+*.pkl
+
+# Data and model files
+model.pkl
+scaler.pkl
+encoder.pkl
+
+# PDF or other docs (if you don't want to track them)
+*.pdf
