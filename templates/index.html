@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Bank Subscription Prediction</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #d7e1ec, #f4f7fa);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 50px;
+    }
+
+    h2 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    form {
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 500px;
+    }
+
+    label {
+      font-weight: 500;
+      margin-top: 10px;
+      display: block;
+    }
+
+    input, select {
+      margin: 6px 0 16px;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      width: 100%;
+    }
+
+    button {
+      background: #0077cc;
+      color: white;
+      padding: 12px;
+      border: none;
+      width: 100%;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #005fa3;
+    }
+
+    #modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      text-align: center;
+    }
+
+    #overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 999;
+    }
+
+    .close-btn {
+      background: #ff4d4d;
+      color: white;
+      padding: 8px 16px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>💼 Predict Bank Subscription</h2>
+
+  <form id="predictForm">
+    <label>Age</label>
+    <input type="number" name="age" required>
+
+    <label>Balance</label>
+    <input type="number" name="balance" required>
+
+    <label>Job</label>
+    <select name="job">
+      <option>admin.</option>
+      <option>technician</option>
+      <option>services</option>
+      <option>management</option>
+      <option>retired</option>
+      <option>blue-collar</option>
+      <option>unemployed</option>
+      <option>entrepreneur</option>
+    </select>
+
+    <label>Marital</label>
+    <select name="marital">
+      <option>married</option>
+      <option>single</option>
+      <option>divorced</option>
+    </select>
+
+    <label>Education</label>
+    <select name="education">
+      <option>primary</option>
+      <option>secondary</option>
+      <option>tertiary</option>
+      <option>unknown</option>
+    </select>
+
+    <label>Default</label>
+    <select name="default">
+      <option>no</option>
+      <option>yes</option>
+    </select>
+
+    <label>Housing</label>
+    <select name="housing">
+      <option>yes</option>
+      <option>no</option>
+    </select>
+
+    <label>Loan</label>
+    <select name="loan">
+      <option>yes</option>
+      <option>no</option>
+    </select>
+
+    <button type="submit">🎯 Predict</button>
+  </form>
+
+  <div id="overlay"></div>
+  <div id="modal">
+    <h3>📊 Prediction Result</h3>
+    <div id="resultText" style="font-size: 18px; margin-top: 10px;"></div>
+    <button class="close-btn" onclick="closeModal()">Close</button>
+  </div>
+
+  <script>
+    const form = document.getElementById('predictForm');
+    const resultText = document.getElementById('resultText');
+    const modal = document.getElementById('modal');
+    const overlay = document.getElementById('overlay');
+
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      resultText.innerText = "⏳ Processing...";
+      showModal();
+
+      const formData = new FormData(this);
+      const data = {};
+      formData.forEach((v, k) => data[k] = isNaN(v) ? v : Number(v));
+
+      try {
+        const res = await fetch('/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+        resultText.innerHTML = `The model predicts: <strong>${result.prediction.toUpperCase()}</strong>`;
+      } catch (err) {
+        resultText.innerText = "❌ Something went wrong. Please try again.";
+      }
+    });
+
+    function showModal() {
+      modal.style.display = 'block';
+      overlay.style.display = 'block';
+    }
+
+    function closeModal() {
+      modal.style.display = 'none';
+      overlay.style.display = 'none';
+    }
+  </script>
+
+</body>
+</html>
